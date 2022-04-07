@@ -145,6 +145,7 @@ def return_results_vsm(query):
     RSV = calculate_vsm_score(dataframe, documents, vocabulary, query)
     # Get X highest ranked documents
     ranked_docs_ids = rank_documents(documents, RSV, doc2idx)
+    ranked_docs_ids = ranked_docs_ids[:20]
     # Get documents to be returned
     docs_to_return = []
     for doc_id in ranked_docs_ids:
