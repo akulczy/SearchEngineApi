@@ -29,6 +29,7 @@ from sklearn.feature_extraction.text import CountVectorizer
 import numpy as np
 
 from bm25 import return_results_bm25
+from vsm import return_results_vsm
 
 @app.route('/', methods=['GET'])
 def home():
@@ -49,6 +50,22 @@ class BM25(Resource):
             ranked_docs_ids = ranked_docs_ids
         )
     
+class VSM(Resource):
+    @staticmethod
+    def post():
+        
+        # Retrieve query from the request
+        data = request.get_json()
+        queryVal = data['queryVal']
+        docs_to_return, ranked_docs_ids = return_results_vsm(queryVal) 
+        
+            
+        return jsonify(
+            results = docs_to_return,
+            ranked_docs_ids = ranked_docs_ids
+        )
+    
 api.add_resource(BM25, '/bm25')
+api.add_resource(VSM, '/vsm')
 if __name__ == '__main__':
     app.run(host="localhost", port=5000)

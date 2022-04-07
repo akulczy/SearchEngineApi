@@ -50,7 +50,7 @@ def preprocess(data):
     
     return preprocessed_data, original_data
 
-
+# Open and preprocess the datasets
 def return_docs_queries():
     text = open("cran.all.1400", "r")
     text = text.read()
@@ -68,6 +68,8 @@ def return_docs_queries():
     
     return documents, queries, original_documents
 
+# Method accepts dataframe, documents and vocalubary lists
+# And calculates BM25 scores
 def calculate_bm25_score(dataframe, documents, vocabulary):
     dfs = (dataframe > 0).sum(axis=0)
 
@@ -96,7 +98,8 @@ def calculate_bm25_score(dataframe, documents, vocabulary):
     
     return bm25_idf
     
-    
+
+# Rank documents and return IDs of the top ranked ones    
 def rank_documents(queries, documents, bm25_idf, doc2idx):
     empty = np.zeros(4177)
     query = word_tokenize(queries[0])
@@ -120,6 +123,7 @@ def rank_documents(queries, documents, bm25_idf, doc2idx):
     return ranked_ids
 
 
+# Utilise methods above to obtain scores, rank documents, and return results
 def return_results_bm25(query):
     documents, queries, original_documents = return_docs_queries()
     queries = [query]
