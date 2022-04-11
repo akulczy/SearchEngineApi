@@ -31,6 +31,9 @@ import numpy as np
 import bm25
 import vsm
 
+import logging
+logging.basicConfig(level=logging.DEBUG)
+
 BM25_model = bm25.BM25()
 VSM_model = vsm.VSM()
 

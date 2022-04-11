@@ -76,11 +76,8 @@ def relevance_feedback_vsm(vsm_scores, vocabulary, relevant_docs, docNo, query):
         nonrelevant_list_len = 1    
     
     term2 = beta * (1/relevant_list_len) * np.sum(relevant_list, axis=0) - gamma * (1/nonrelevant_list_len) * np.sum(nonrelevant_list, axis=0)
-    print(term1)
-    print(term2)
-    q_next = term1.T + term2
     
-    
+    q_next = term1.T + term2  
     
     # Return q_next
     # New predictions are output based on q_next within the VSM class

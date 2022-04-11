@@ -19,6 +19,7 @@ nltk.download('stopwords')
 import pandas as pd
 from sklearn.feature_extraction.text import CountVectorizer
 import numpy as np
+import logging
 
 from relevance_feedback_vsm import *
 
@@ -221,7 +222,7 @@ class VSM:
         for doc in self.documents:
             doc2idx[doc] = idx
             idx += 1
-            
+                        
         # Get the q next
         q_next = relevance_feedback_vsm(VSM_score, self.vocabulary, relevant_docs, docNo, query)
         
