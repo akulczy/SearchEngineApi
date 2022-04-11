@@ -28,8 +28,11 @@ import pandas as pd
 from sklearn.feature_extraction.text import CountVectorizer
 import numpy as np
 
-from bm25 import return_results_bm25
-from vsm import return_results_vsm
+import bm25
+import vsm
+
+BM25_model = bm25.BM25()
+VSM_model = vsm.VSM()
 
 @app.route('/', methods=['GET'])
 def home():
@@ -39,10 +42,11 @@ class BM25(Resource):
     @staticmethod
     def post():
         
-        # Retrieve query from the request
+        # Retrieve query and the no of documents to retrieve from the request
         data = request.get_json()
         queryVal = data['queryVal']
-        docs_to_return, ranked_docs_ids = return_results_bm25(queryVal) 
+        docNo = int(data['docNo'])
+        docs_to_return, ranked_docs_ids = BM25_model.return_results_bm25(queryVal, docNo) 
         
             
         return jsonify(
@@ -50,14 +54,52 @@ class BM25(Resource):
             ranked_docs_ids = ranked_docs_ids
         )
     
+    
 class VSM(Resource):
     @staticmethod
     def post():
         
-        # Retrieve query from the request
+        # Retrieve query and the no of documents to retrieve from the request
         data = request.get_json()
         queryVal = data['queryVal']
-        docs_to_return, ranked_docs_ids = return_results_vsm(queryVal) 
+        docNo = int(data['docNo'])
+        docs_to_return, ranked_docs_ids = VSM_model.return_results_vsm(queryVal, docNo) 
+        
+            
+        return jsonify(
+            results = docs_to_return,
+            ranked_docs_ids = ranked_docs_ids
+        )
+    
+    
+class BM25_Relevance_Feedback(Resource):
+    @staticmethod
+    def post():
+        
+        # Retrieve query and the no of documents to retrieve from the request
+        data = request.get_json()
+        queryVal = data['queryVal']
+        docNo = int(data['docNo'])
+        relevant_docs = data['relevanceList']
+        docs_to_return, ranked_docs_ids = BM25_model.return_results_bm25_feedback(queryVal, docNo, relevant_docs) 
+        
+            
+        return jsonify(
+            results = docs_to_return,
+            ranked_docs_ids = ranked_docs_ids
+        )
+    
+class VSM_Relevance_Feedback(Resource):
+    @staticmethod
+    def post():
+        
+        # Retrieve query and the no of documents to retrieve from the request
+        data = request.get_json()
+        queryVal = data['queryVal']
+        docNo = int(data['docNo'])
+        relevant_docs = data['relevanceList']
+        
+        docs_to_return, ranked_docs_ids = VSM_model.return_results_vsm_feedback(queryVal, docNo, relevant_docs) 
         
             
         return jsonify(
@@ -67,5 +109,8 @@ class VSM(Resource):
     
 api.add_resource(BM25, '/bm25')
 api.add_resource(VSM, '/vsm')
+api.add_resource(BM25_Relevance_Feedback, '/bm25/feedback')
+api.add_resource(VSM_Relevance_Feedback, '/vsm/feedback')
+
 if __name__ == '__main__':
-    app.run(host="localhost", port=5000)
+    app.run(host="localhost", port=5000, debug=True)
