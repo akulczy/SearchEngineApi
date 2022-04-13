@@ -20,6 +20,9 @@ from sklearn.feature_extraction.text import CountVectorizer
 import numpy as np
 
 from relevance_feedback_bm25 import *
+from process_data import preprocess, preprocess_query
+
+# Implementation of the BM25 IR Model
 
 class BM25:
     def __init__(self):
@@ -28,38 +31,8 @@ class BM25:
         self.documents = []
         self.scores_list = []
         self.original_docs = []
-
-    # Perform preprocessing of the datasets
-    def preprocess(self, data):
-        preprocessed_data = []
-        # Original data is stored to return it to end-user
-        original_data = []
-        for sent in data:
-            # Split on .W symbol to split the documents
-            sent = sent.split(".W")
-            sent = sent[1]
-            original_data.append(sent)
-            # Convert to lower case
-            new_sent = sent.lower()
-            # Remove digits
-            new_sent = re.sub(r'\d+','', new_sent)
-            # Remove punctuation
-            punctuation_list = set(string.punctuation)
-            new_sent = " ".join("".join([" " if ch in punctuation_list else ch for ch in new_sent]).split())
-            # Tokenize
-            tokens = word_tokenize(new_sent)
-            # Remove stop words
-            stop_words = stopwords.words('english')
-            tokens = [word for word in tokens if word not in stop_words]
-            # Apply stemming
-            ps = PorterStemmer()
-            tokens = [ps.stem(i) for i in tokens]
-            # Return pre-processed data
-            document_text = ' '.join(tokens)
-            preprocessed_data.append(document_text)
-        
-        return preprocessed_data, original_data
     
+    # Dataset Loader
     # Open and preprocess the datasets
     def return_docs_queries(self):
         text = open("cran.all.1400", "r")
@@ -67,14 +40,14 @@ class BM25:
         text = text.split('.I')
         text = [sent.replace('\n',' ') for sent in text]
         text = text[1:]
-        documents, original_documents = self.preprocess(text)
+        documents, original_documents = preprocess(text)
         
         qtext = open("cran.qry", "r")
         qtext = qtext.read()
         qtext = qtext.split('.I')
         qtext = [sent.replace('\n',' ') for sent in qtext]
         qtext = qtext[1:]
-        queries, original_queries = self.preprocess(qtext)
+        queries, original_queries = preprocess(qtext)
         
         self.documents = documents
         self.original_docs = original_documents
@@ -140,6 +113,7 @@ class BM25:
     # Utilise methods above to obtain scores, rank documents, and return results
     def return_results_bm25(self, query, docNo):
         documents, queries, original_documents = self.return_docs_queries()
+        query = preprocess_query(query)
         queries = [query]
         
         doc2idx = {}
