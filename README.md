@@ -14,3 +14,6 @@ Process the query data and retrieve results of the BM25 model, along with the re
 > /vsm/feedback
 
 Process the query data and retrieve results of the VSM model, along with the relevance feedback results.
+
+## Dataset
+The dataset utilised for the project is Cranfield 1400 from the University of Glasgow Collection, available from http://ir.dcs.gla.ac.uk/resources/test_collections/cran/.
